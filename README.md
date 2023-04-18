@@ -2,9 +2,9 @@
 # Chat-T-Tubbs
 
 ## Startup Links
-- [ChatGPT Documentation)(https://platform.openai.com/docs/api-reference/authentication)
+- [ChatGPT Documentation](https://platform.openai.com/docs/api-reference/authentication)
 - [Openai Python Chat Repo](https://github.com/openai/openai-python)
-- (Sydney's Create React Chat App)[https://github.com/sydneyrd/c62_chat_client]
+- [Sydney's Create React Chat App](https://github.com/sydneyrd/c62_chat_client)
 
 ## Contributors 
 - [Kristi Cornett](https://github.com/kristicornett)
