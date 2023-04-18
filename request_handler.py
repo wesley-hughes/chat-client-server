@@ -1,4 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import openai
+import os
+openai.api_key = os.getenv("openai_apikey")
 
 
 # Here's a class. It inherits from another class.
@@ -47,7 +50,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         print(self.path)
 
         # It's an if..else statement
-        if self.path == "/animals":
+        if self.path == "/chat":
             # In Python, this is a list of dictionaries
             # In JavaScript, you would call it an array of objects
             response = [
@@ -68,11 +71,24 @@ class HandleRequests(BaseHTTPRequestHandler):
         """
         # Set response code to 'Created'
         self._set_headers(201)
+        if self.path == "/chat":
 
-        content_len = int(self.headers.get('content-length', 0))
-        post_body = self.rfile.read(content_len)
-        response = f"received post request:<br>{post_body}"
-        self.wfile.write(response.encode())
+            # Set up the model and prompt
+            model_engine = "text-davinci-003"
+            prompt = "Hello, how are you today?"
+
+            # Generate a response
+            completion = openai.Completion.create(
+                engine=model_engine,
+                prompt=prompt,
+                max_tokens=1024,
+                n=1,
+                stop=None,
+                temperature=0.5,
+            )
+
+        response = completion.choices[0].text
+        print(response)
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
