@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import openai
 import os
+import json
 openai.api_key = os.getenv("openai_apikey")
 
 
@@ -66,29 +67,27 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
+    
     def do_POST(self):
         """Handles POST requests to the server
         """
         # Set response code to 'Created'
         self._set_headers(201)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+
+        # Convert JSON string to a Python dictionary
+        post_body = json.loads(post_body)
         if self.path == "/chat":
+            # send user input
+            # put input into array
+            # 
 
-            # Set up the model and prompt
-            model_engine = "text-davinci-003"
-            prompt = "Hello, how are you today?"
+            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body)
+            print(completion.choices[0].message.content)
+            response = completion.choices[0].message.content
+            self.wfile.write(f"{response}".encode())
 
-            # Generate a response
-            completion = openai.Completion.create(
-                engine=model_engine,
-                prompt=prompt,
-                max_tokens=1024,
-                n=1,
-                stop=None,
-                temperature=0.5,
-            )
-
-        response = completion.choices[0].text
-        print(response)
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any PUT request.
