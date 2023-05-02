@@ -1,9 +1,9 @@
-import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import os
 import openai
+import os
+import json
+openai.api_key = os.getenv("openai_apikey")
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -16,6 +16,28 @@ class HandleRequests(BaseHTTPRequestHandler):
     """
 
     # Here's a class function
+    def _set_headers(self, status):
+        # Notice this Docstring also includes information about the arguments passed to the function
+        """Sets the status code, Content-Type and Access-Control-Allow-Origin
+        headers on the response
+
+        Args:
+            status (number): the status code to return to the front end
+        """
+        self.send_response(status)
+        self.send_header('Content-type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+
+    # Another method! This supports requests with the OPTIONS verb.
+    def do_OPTIONS(self):
+        """Sets the options headers
+        """
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
+        self.end_headers()
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any GET request.
@@ -45,9 +67,10 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
+    
     def do_POST(self):
-        """Handles POST requests to the server"""
-
+        """Handles POST requests to the server
+        """
         # Set response code to 'Created'
         self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
@@ -55,50 +78,24 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Convert JSON string to a Python dictionary
         post_body = json.loads(post_body)
-        
         if self.path == "/chat":
-            model_engine = post_body.get('model')
-            messages = post_body.get('messages', [])
+            # send user input
+            # put input into array
+            # 
 
-            completions = openai.Completion.create(
-                engine=model_engine,
-                prompt=messages,
-                max_tokens=1024,
-                n=1,
-                stop=None,
-                temperature=0.5,
-            )
+            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body)
+            print(completion.choices[0].message.content)
+            response = completion.choices[0].message.content
+            self.wfile.write(f"{response}".encode())
 
-        message = completions.choices[0].text
-        return message.strip()
 
-    # A method that handles any PUT request.
+    # Here's a method on the class that overrides the parent's method.
+    # It handles any PUT request.
+
     def do_PUT(self):
-        """Handles PUT requests to the server"""
-        self.do_PUT()
-
-    def _set_headers(self, status):
-        # Notice this Docstring also includes information about the arguments passed to the function
-        """Sets the status code, Content-Type and Access-Control-Allow-Origin
-        headers on the response
-
-        Args:
-            status (number): the status code to return to the front end
+        """Handles PUT requests to the server
         """
-        self.send_response(status)
-        self.send_header('Content-type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-
-    # Another method! This supports requests with the OPTIONS verb.
-    def do_OPTIONS(self):
-        """Sets the options headers
-        """
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-        self.send_header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept')
-        self.end_headers()
+        self.do_POST()
 
 
 # This function is not inside the class. It is the starting

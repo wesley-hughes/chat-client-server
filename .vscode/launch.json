@@ -5,12 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Request Handler",
+            "name": "Python: Current File",
             "type": "python",
             "request": "launch",
             "program": "./request_handler.py",
             "console": "integratedTerminal",
-            "justMyCode": true,
             "autoReload": {
                 "enable": true
             }
