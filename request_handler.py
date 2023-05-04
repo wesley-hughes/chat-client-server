@@ -1,8 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import openai
 import os
 import json
-openai.api_key = os.getenv("openai_apikey")
+import openai
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 # Here's a class. It inherits from another class.
@@ -83,9 +83,9 @@ class HandleRequests(BaseHTTPRequestHandler):
             # put input into array
             # 
 
-            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body)
-            print(completion.choices[0].message.content)
-            response = completion.choices[0].message.content
+            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.3)
+            print(completion)
+            response = completion.choices[0].message
             self.wfile.write(f"{response}".encode())
 
 
