@@ -8,6 +8,7 @@ from voice import get_voices
 
 openai.api_key = os.getenv("openai_apikey")
 
+
 #may need to use response from POST 
 
 # audio = generate(
@@ -95,12 +96,14 @@ class HandleRequests(BaseHTTPRequestHandler):
             # send user input
             # put input into array
 
+
             completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.4)
             print(completion.choices[0].message.content)
             response = completion.choices[0].message
             audio = get_voices("hi")
             # self.wfile.write(f"{response}".encode())
             self.wfile.write(audio)
+
 
 
     # Here's a method on the class that overrides the parent's method.
