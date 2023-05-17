@@ -1,9 +1,23 @@
+import openai
+from elevenlabs import generate, play
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 import json
-import openai
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from voice import get_voices
 
+
+openai.api_key = os.getenv("openai_apikey")
+
+
+#may need to use response from POST 
+
+# audio = generate(
+#   text="Hi! My name is Bella, nice to meet you!",
+#   voice="Bella",
+#   model="eleven_monolingual_v1"
+# )
+
+# play(audio)
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -81,12 +95,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         if self.path == "/chat":
             # send user input
             # put input into array
-            # 
 
-            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.3)
-            print(completion)
+
+            completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.4)
+            print(completion.choices[0].message.content)
             response = completion.choices[0].message
-            self.wfile.write(f"{response}".encode())
+            audio = get_voices("hi")
+            # self.wfile.write(f"{response}".encode())
+            self.wfile.write(audio)
+
 
 
     # Here's a method on the class that overrides the parent's method.
