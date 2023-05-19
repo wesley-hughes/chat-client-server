@@ -6,7 +6,7 @@ import json
 from voice import get_voices
 
 
-openai.api_key = os.getenv("openai_apikey")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 #may need to use response from POST 
@@ -99,10 +99,11 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.4)
             print(completion.choices[0].message.content)
-            response = completion.choices[0].message
-            audio = get_voices("hi")
+            content = completion.choices[0].message.content
+            audio = get_voices(content)
+            response = {content: content, audio: audio}
             # self.wfile.write(f"{response}".encode())
-            self.wfile.write(audio)
+            self.wfile.write(response.encode())
 
 
 
