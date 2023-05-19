@@ -3,6 +3,7 @@ from elevenlabs import generate, play
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 import json
+import base64
 from voice import get_voices
 
 
@@ -99,11 +100,18 @@ class HandleRequests(BaseHTTPRequestHandler):
 
             completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=post_body, temperature=1.4)
             print(completion.choices[0].message.content)
-            content = completion.choices[0].message.content
-            audio = get_voices(content)
-            response = {content: content, audio: audio}
-            # self.wfile.write(f"{response}".encode())
-            self.wfile.write(response.encode())
+            answer = completion.choices[0].message.content
+            audio = get_voices(answer)
+
+            # Convert audio bytes to a base64 encoded string
+            audio_base64 = base64.b64encode(audio)
+
+            # Decode the base64 encoded string to get a regular string
+            audio_string = audio_base64.decode()
+
+            response = {"content": answer, "audio": audio_string}
+            self.wfile.write(json.dumps(response).encode())
+            # self.wfile.write(response.encode())
 
 
 
